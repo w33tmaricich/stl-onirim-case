@@ -8,10 +8,13 @@ CARD_DEPTH_LOW = 43;
 CARD_DEPTH_HIGH= 69;
 CARD_LID_WIDTH = 15;
 CARD_LID_THICKNESS = 5;
+CARD_TRANSLATION = [0,-15,0];
 
 // incubus holder dimensions.
 INCUBUS_WIDTH = 30.35;
 INCUBUS_HEIGHT = 18;
+INCUBUS_DEPTH = 20;
+INCUBUS_TRANSLATION = [0,55,0];
 
 module box_bar() {
     box_bar_size = 10;
@@ -28,7 +31,8 @@ module cross() {
 module holy_cross() {
     difference() {
         cross();
-        linear_extrude(height=CARD_DEPTH_HIGH, center=false) square([CARD_WIDTH, CARD_HEIGHT], true);
+        translate(CARD_TRANSLATION) linear_extrude(height=CARD_DEPTH_HIGH, center=false) square([CARD_WIDTH, CARD_HEIGHT], true);
+        translate(INCUBUS_TRANSLATION) linear_extrude(height=CARD_DEPTH_HIGH, center=false) square([INCUBUS_WIDTH, INCUBUS_HEIGHT], true);
     }
 }
 
@@ -40,6 +44,16 @@ module card_cube(x=CARD_WIDTH, y=CARD_HEIGHT, z=CARD_DEPTH_HIGH, padding=8) {
     }
 }
 
+module incubus_walls() {
+    card_cube(x=INCUBUS_WIDTH, y=INCUBUS_HEIGHT, z=INCUBUS_DEPTH,padding=8);
+}
+
+module incubus_holder() {
+    translate(INCUBUS_TRANSLATION) difference() {
+        incubus_walls();
+        card_cube(x=INCUBUS_WIDTH, y=INCUBUS_HEIGHT, z=INCUBUS_DEPTH*2,padding=0);
+    }
+}
 module card_walls() {
     // lay out the cutouts
     difference() {
@@ -53,7 +67,7 @@ module card_walls() {
 }
 module card_holder() {
     
-    difference() {
+    translate(CARD_TRANSLATION) difference() {
         card_walls();
         linear_extrude(height=CARD_DEPTH_HIGH, center=false) square([CARD_WIDTH, CARD_HEIGHT], true);
     }
@@ -62,6 +76,7 @@ module card_holder() {
 module onirim_case() {
     union() {
         holy_cross();
+        incubus_holder();
         card_holder();
     }
 }
@@ -69,4 +84,4 @@ module onirim_case() {
 //holy_cross();
 //card_holder();
 
-onirim_case();
+//onirim_case();
